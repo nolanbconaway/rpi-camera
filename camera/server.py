@@ -1,4 +1,8 @@
-"""HTTP server for the camera"""
+"""Run an HTTP server with live images from the camera. Access on port 8000.
+
+This is very much a copy from the picamera recipes page.
+"""
+
 import argparse
 import io
 import logging

@@ -1,3 +1,4 @@
+"""Misc config vars."""
 from pathlib import Path
 
 RESOLUTION_MAPPING = {

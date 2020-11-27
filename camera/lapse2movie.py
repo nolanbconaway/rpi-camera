@@ -1,3 +1,4 @@
+"""Combine images taken in a timelapse to a video."""
 import argparse
 from contextlib import contextmanager
 from pathlib import Path

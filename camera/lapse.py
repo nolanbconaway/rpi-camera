@@ -1,4 +1,4 @@
-"""Capture time lapse photos to the storage dir. 
+"""Capture time lapse photos to the storage dir.
 
 Each lapse instance will be saved to its own directory named after the UTC isoformat
 start date, with each image saved with its UTC isoformat stamp.
