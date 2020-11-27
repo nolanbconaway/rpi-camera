@@ -38,10 +38,11 @@ if __name__ == "__main__":
     with picamera.PiCamera(
         resolution=config.RESOLUTION_MAPPING[args.resolution]
     ) as camera:
+        camera.rotation = args.rotation
         time.sleep(2)
+
         storage_dir = config.STORAGE / "lapses" / datetime.datetime.utcnow().isoformat()
         storage_dir.mkdir(exist_ok=True)
-        camera.rotation = args.rotation
         for filename in camera.capture_continuous(
             str(storage_dir) + "/{timestamp:%Y-%m-%dT%H:%M:%S}.jpg"
         ):
