@@ -58,10 +58,6 @@ class StreamingOutput(object):
 class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/":
-            self.send_response(301)
-            self.send_header("Location", "/index.html")
-            self.end_headers()
-        elif self.path == "/index.html":
             content = PAGE.encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html")
@@ -105,11 +101,12 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 if __name__ == "__main__":
     args = make_parser().parse_args()
     output = StreamingOutput()  # global var hack, watch out!
-    http_server = StreamingServer(("0.0.0.0", 5000), StreamingHandler)
+    http_server = StreamingServer(("0.0.0.0", config.WEB_PORT), StreamingHandler)
 
     with picamera.PiCamera(
         resolution=config.RESOLUTION_MAPPING[args.resolution], framerate=args.framerate
     ) as camera:
         camera.start_recording(output, format="mjpeg")
         camera.rotation = args.rotation
+        print(f"Serving on port {config.WEB_PORT}")
         http_server.serve_forever()
