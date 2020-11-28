@@ -5,6 +5,8 @@ start date, with each image saved with its UTC isoformat stamp.
 """
 import argparse
 import datetime
+import subprocess
+import sys
 import time
 from fractions import Fraction
 
@@ -13,6 +15,7 @@ import picamera
 from camera import config
 
 LAPSE_STORAGE = config.STORAGE / "lapses"
+WEB_COMMAND = [sys.executable, "-m", "camera.lapse_web"]
 
 
 def make_parser() -> argparse.ArgumentParser:
@@ -50,7 +53,7 @@ if __name__ == "__main__":
         kw["framerate"] = Fraction(1, 6)
         kw["sensor_mode"] = 3
 
-    with picamera.PiCamera(**kw) as camera:
+    with picamera.PiCamera(**kw) as camera, subprocess.Popen(WEB_COMMAND) as web:
         camera.rotation = args.rotation
         if args.dark:
             camera.shutter_speed = 6000000
@@ -68,5 +71,5 @@ if __name__ == "__main__":
             str(storage_dir) + "/{timestamp:%Y-%m-%dT%H:%M:%S}.jpg",
             quality=args.quality,
         ):
-            print(f"  captured to {filename}")
+            print(f"Image captured to {filename}.")
             time.sleep(args.lapse_seconds)

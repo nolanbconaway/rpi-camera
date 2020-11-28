@@ -5,7 +5,12 @@ setuptools.setup(
     version="0.0.1",
     packages=["camera"],
     python_requires=">=3.7",
-    install_requires=["picamera==1.13"],
+    install_requires=[
+        "picamera==1.13",
+        "flask==1.1.2",
+        "pytz==2020.4",
+        "gevent==20.9.0",
+    ],
     package_data={
         "camera": ["html/*.html"],
     },

@@ -12,3 +12,4 @@ RESOLUTION_MAPPING = {
 
 STORAGE = Path("/mnt/usb/camera")
 MODULE_DIR = Path(__file__).resolve().parent
+WEB_PORT = 5000
