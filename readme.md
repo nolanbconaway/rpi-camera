@@ -10,4 +10,8 @@ So far:
 - `python -m camera.realtime`: run a real time HTTP server with live images form the camera.
 - `python -m camera.lapse2movie`: combine images from `lapse` into a divx encoded .avi file.
 
-Web services are served to port 5000 on `0.0.0.0`, which i access via `<hostname>.local`.
+Web services are served to port 5000 on `0.0.0.0`, which i access via `<hostname>.local`. I run the flask dev server with this incantation:
+
+```
+FLASK_APP=camera.lapse_monitor FLASK_ENV=development flask run --host=0.0.0.0
+```
