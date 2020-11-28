@@ -15,7 +15,7 @@ import picamera
 
 from camera import config
 
-PAGE = (config.MODULE_DIR / "html/server.html").read_text()
+PAGE = (config.MODULE_DIR / "html/realtime.html").read_text()
 
 
 def make_parser() -> argparse.ArgumentParser:
@@ -105,7 +105,7 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 if __name__ == "__main__":
     args = make_parser().parse_args()
     output = StreamingOutput()  # global var hack, watch out!
-    http_server = StreamingServer(("0.0.0.0", 8000), StreamingHandler)
+    http_server = StreamingServer(("0.0.0.0", 5000), StreamingHandler)
 
     with picamera.PiCamera(
         resolution=config.RESOLUTION_MAPPING[args.resolution], framerate=args.framerate
