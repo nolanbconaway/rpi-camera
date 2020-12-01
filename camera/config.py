@@ -13,3 +13,18 @@ RESOLUTION_MAPPING = {
 STORAGE = Path("/mnt/usb/camera")
 MODULE_DIR = Path(__file__).resolve().parent
 WEB_PORT = 5000
+EXPOSURE_MODES = (
+    "off",
+    "auto",
+    "night",
+    "nightpreview",
+    "backlight",
+    "spotlight",
+    "sports",
+    "snow",
+    "beach",
+    "verylong",
+    "fixedfps",
+    "antishake",
+    "fireworks",
+)

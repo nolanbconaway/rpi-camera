@@ -23,8 +23,14 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--rot", dest="rotation", type=int, help="degrees rotation", default=0
     )
+    parser.add_argument("--fps", dest="fps", type=int, help="fps", default=24)
     parser.add_argument(
-        "--fr", dest="framerate", type=int, help="framerate", default=24
+        "--mode",
+        dest="exposure_mode",
+        type=str,
+        default="off",
+        choices=config.EXPOSURE_MODES,
+        help="exposure mode",
     )
     parser.add_argument(
         "--res",
@@ -104,9 +110,10 @@ if __name__ == "__main__":
     http_server = StreamingServer(("0.0.0.0", config.WEB_PORT), StreamingHandler)
 
     with picamera.PiCamera(
-        resolution=config.RESOLUTION_MAPPING[args.resolution], framerate=args.framerate
+        resolution=config.RESOLUTION_MAPPING[args.resolution], fps=args.fps
     ) as camera:
-        camera.start_recording(output, format="mjpeg")
         camera.rotation = args.rotation
+        camera.exposure_mode = args.exposure_mode
+        camera.start_recording(output, format="mjpeg")
         print(f"Serving on port {config.WEB_PORT}")
         http_server.serve_forever()
