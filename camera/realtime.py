@@ -2,11 +2,11 @@
 
 This is very much a copy from the picamera recipes page.
 """
-
 import argparse
 import io
 import logging
 import socketserver
+import time
 from http import server
 from pathlib import Path
 from threading import Condition
@@ -110,10 +110,12 @@ if __name__ == "__main__":
     http_server = StreamingServer(("0.0.0.0", config.WEB_PORT), StreamingHandler)
 
     with picamera.PiCamera(
-        resolution=config.RESOLUTION_MAPPING[args.resolution], fps=args.fps
+        resolution=config.RESOLUTION_MAPPING[args.resolution], framerate=args.fps
     ) as camera:
         camera.rotation = args.rotation
         camera.exposure_mode = args.exposure_mode
+        time.sleep(5)  ## let it adjust
+
         camera.start_recording(output, format="mjpeg")
         print(f"Serving on port {config.WEB_PORT}")
         http_server.serve_forever()
