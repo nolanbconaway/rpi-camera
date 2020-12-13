@@ -46,6 +46,7 @@ def make_parser() -> argparse.ArgumentParser:
         default=12,
     )
     parser.add_argument("--dst", type=Path, default=Path("video.avi"))
+    parser.add_argument("--stamp", action="store_true")
     return parser
 
 
@@ -56,5 +57,26 @@ if __name__ == "__main__":
     with VideoWriter(
         str(args.dst), cv2.VideoWriter_fourcc(*"DIVX"), args.fps, (width, height)
     ) as video:
-        for image in tqdm(images):
-            video.write(cv2.imread(str(image.resolve())))
+        for image_path in tqdm(images):
+            ts = datetime.datetime.fromisoformat(image_path.name[:-4])
+            image = cv2.imread(str(image_path.resolve()))
+            if args.stamp:
+                image = cv2.putText(
+                    img=image,
+                    text=ts.strftime("%H:%M"),
+                    org=(int(width * 0.01), int(height * 0.03)),
+                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=1,
+                    color=(0, 0, 0),
+                    thickness=4,
+                )
+                image = cv2.putText(
+                    img=image,
+                    text=ts.strftime("%I:%M%p"),
+                    org=(int(width * 0.01), int(height * 0.03)),
+                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=1,
+                    color=(255, 255, 255),
+                    thickness=2,
+                )
+            video.write(image)
