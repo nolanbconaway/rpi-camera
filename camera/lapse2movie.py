@@ -58,12 +58,16 @@ if __name__ == "__main__":
         str(args.dst), cv2.VideoWriter_fourcc(*"DIVX"), args.fps, (width, height)
     ) as video:
         for image_path in tqdm(images):
-            ts = datetime.datetime.fromisoformat(image_path.name[:-4])
+            ts = datetime.datetime.fromisoformat(image_path.name[:-4]).strftime(
+                "%I:%M%p"
+            )
             image = cv2.imread(str(image_path.resolve()))
+
+            # if i change this even once more it will become a function.
             if args.stamp:
                 image = cv2.putText(
                     img=image,
-                    text=ts.strftime("%H:%M"),
+                    text=ts,
                     org=(int(width * 0.01), int(height * 0.03)),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=1,
@@ -72,11 +76,11 @@ if __name__ == "__main__":
                 )
                 image = cv2.putText(
                     img=image,
-                    text=ts.strftime("%I:%M%p"),
+                    text=ts,
                     org=(int(width * 0.01), int(height * 0.03)),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=1,
                     color=(255, 255, 255),
-                    thickness=2,
+                    thickness=1,
                 )
             video.write(image)
