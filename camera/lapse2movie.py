@@ -6,6 +6,7 @@ the FPS argument can be used to adjust the "speed" of the video.
 
 import argparse
 import datetime
+import multiprocessing
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -47,22 +48,40 @@ def make_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--dst", type=Path, default=Path("video.avi"))
     parser.add_argument("--stamp", action="store_true")
+    parser.add_argument(
+        "--cores",
+        type=int,
+        default=multiprocessing.cpu_count(),
+    )
     return parser
+
+
+def load_image(p: Path):
+    """Load a single image from a path."""
+    dt = datetime.datetime.fromisoformat(p.name[:-4])
+    return dt, cv2.imread(str(p.resolve()))
 
 
 if __name__ == "__main__":
     args = make_parser().parse_args()
-    images = sorted([p for p in args.src.glob("*.jpg") if p.stat().st_size > 0])
-    height, width, layers = cv2.imread(str(images[0].resolve())).shape
+
+    # load a single image for the dimensions.
+    image_paths = sorted([p for p in args.src.glob("*.jpg") if p.stat().st_size > 0])
+    height, width, layers = load_image(image_paths[0])[1].shape
+
+    # load the rest via multiprocessing
+    print("Loading images into memory...")
+    with multiprocessing.Pool(args.cores) as pool:
+        images = dict(
+            list(tqdm(pool.imap(load_image, image_paths), total=len(image_paths)))
+        )
+
+    print("Making video...")
     with VideoWriter(
         str(args.dst), cv2.VideoWriter_fourcc(*"DIVX"), args.fps, (width, height)
     ) as video:
-        for image_path in tqdm(images):
-            ts = datetime.datetime.fromisoformat(image_path.name[:-4]).strftime(
-                "%I:%M%p"
-            )
-            image = cv2.imread(str(image_path.resolve()))
-
+        for dt, image in tqdm(images.items()):
+            ts = dt.strftime("%I:%M%p")
             # if i change this even once more it will become a function.
             if args.stamp:
                 image = cv2.putText(
