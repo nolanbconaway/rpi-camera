@@ -18,8 +18,7 @@
     <div id=wrap>
         <h1>Time Lapse Monitor</h1>
         <p>
-            The timelapse was started at: <span id='lapse_time'>UNKNOWN</span>
-            and consists of <span id='lapse_n'></span> images.
+            The timelapse consists of <span id='lapse_n'></span> images.
         </p>
         <p>
             The latest image was captured at: <span id='image_time'>UNKNOWN</span>.
@@ -40,16 +39,6 @@
 
     function updatePage(data) {
         document.getElementById('latest_img').src = "data:image/png;base64," + data.image;
-        document.getElementById('image_time').textContent = (
-            moment(data.ts)
-                .tz("America/New_York")
-                .format('MMM D, h:mm:ss a')
-        );
-        document.getElementById('lapse_time').textContent = (
-            moment(data.lapse_started_at)
-                .tz("America/New_York")
-                .format('MMM D, h:mm:ss a')
-        );
         document.getElementById('check_time').textContent = (
             moment()
                 .tz("America/New_York")
