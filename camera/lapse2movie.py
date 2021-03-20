@@ -6,7 +6,6 @@ the FPS argument can be used to adjust the "speed" of the video.
 
 import argparse
 import datetime
-import multiprocessing
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -48,11 +47,6 @@ def make_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--dst", type=Path, default=Path("video.avi"))
     parser.add_argument("--stamp", action="store_true")
-    parser.add_argument(
-        "--cores",
-        type=int,
-        default=multiprocessing.cpu_count(),
-    )
     return parser
 
 
@@ -69,18 +63,10 @@ if __name__ == "__main__":
     image_paths = sorted([p for p in args.src.glob("*.jpg") if p.stat().st_size > 0])
     height, width, layers = load_image(image_paths[0])[1].shape
 
-    # load the rest via multiprocessing
-    print("Loading images into memory...")
-    with multiprocessing.Pool(args.cores) as pool:
-        images = dict(
-            list(tqdm(pool.imap(load_image, image_paths), total=len(image_paths)))
-        )
-
-    print("Making video...")
     with VideoWriter(
         str(args.dst), cv2.VideoWriter_fourcc(*"DIVX"), args.fps, (width, height)
     ) as video:
-        for dt, image in tqdm(images.items()):
+        for dt, image in tqdm(map(load_image, image_paths), total=len(image_paths)):
             ts = dt.strftime("%I:%M%p")
             # if i change this even once more it will become a function.
             if args.stamp:
